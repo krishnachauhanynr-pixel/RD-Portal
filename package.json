@@ -1,0 +1,13 @@
+{
+  "name": "admin-panel-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Admin Panel Registration and Login",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["admin", "auth", "registration", "login"],
+  "author": "",
+  "license": "ISC"
+}
