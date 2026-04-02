@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RD Portal</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+
+/* BACKGROUND */
+body{
+height:100vh;
+background:#102a43;
+display:flex;justify-content:center;align-items:center;
+}
+body::before{
+content:"";position:absolute;width:100%;height:100%;
+background:rgba(0,0,0,0.6);
+}
+
+/* LOGIN BOX */
+.container{
+position:relative;width:350px;padding:30px;
+background:linear-gradient(135deg, rgba(20,30,50,0.9), rgba(40,50,70,0.9));
+border-radius:20px;text-align:center;color:#fff;
+box-shadow:0 10px 30px rgba(0,0,0,0.5);
+}
+
+.input-box{
+display:flex;border-bottom:2px solid #f4a300;margin:20px 0;
+}
+.input-box input{
+width:100%;padding:12px;background:transparent;border:none;color:white;font-size:16px;
+}
+.input-box input:focus{
+outline:none;border-bottom-color:#fff;
+}
+
+button{
+width:100%;padding:14px;background:linear-gradient(135deg, #f4a300, #e67e22);
+border:none;border-radius:25px;color:#fff;cursor:pointer;margin-top:15px;
+font-weight:bold;text-transform:uppercase;letter-spacing:1px;
+transition:transform 0.2s;
+}
+button:hover{
+transform:scale(1.05);
+}
+
+.password-toggle-wrapper {
+  display:flex;align-items:center;gap:8px;
+  position:relative;
+  width:100%;
+}
+.password-toggle-wrapper input{
+  flex:1;
+  color:#000;
+  background:transparent;
+  border:none;
+}
+.password-toggle {
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  border:none;
+  background:transparent;
+  color:#333;
+  cursor:pointer;
+  font-size:16px;
+  line-height:1;
+  width:30px;
+  height:30px;
+  text-align:center;
+  border-radius:4px;
+}
+.password-toggle:hover {
+  background:rgba(0,0,0,0.08);
+}
+
+
+#adminPanel .input-box input {
+  color: #000;
+  /* background: #fff; */
+}
+
+#adminPanel .input-box input::placeholder {
+  color: #666;
+}
+
+/* DASHBOARD */
+.dashboard{
+display:none;
+position:absolute;
+top:0;left:0;width:100%;height:100%;
+background:linear-gradient(135deg, #e9eef5, #d4e4f7);
+overflow:auto;
+padding:20px;
+}
+
+.wrapper{
+max-width:800px;margin:auto;
+border:4px solid #2c3e50;border-radius:25px;
+padding:25px;background:#f7f9fc;
+box-shadow:0 15px 40px rgba(0,0,0,0.1);
+}
+
+.card{
+background:#fff;border-radius:20px;padding:25px;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+.top{
+display:flex;justify-content:space-between;align-items:center;
+}
+
+.balance{
+font-size:32px;font-weight:bold;margin-top:15px;color:#2c3e50;
+}
+
+.logout-btn{
+position:absolute;
+left:20px;
+top:20px;
+height: 30px;
+width: 90px;
+padding:8px 12px;
+align-items: left;
+font-size:12px;
+background:#e74c3c;
+color:#fff;
+border:none;
+border-radius:10px;
+cursor:pointer;
+box-shadow:0 2px 8px rgba(0,0,0,0.25);
+}
+
+.logout-btn{
+/* keep existing absolute hide or in case leftover */
+position:absolute;
+left:20px;
+top:20px;
+opacity:0;
+pointer-events:none;
+}
+.logout-inline-btn{
+padding:6px 10px;
+font-size:12px;
+background:#e74c3c;
+color:#fff;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+.logout-inline-btn:hover{
+transform:scale(1.03);
+}
+
+.success{
+margin-top:20px;padding:15px;
+background:linear-gradient(135deg, #d4edda, #c3e6cb);color:#155724;border-radius:10px;
+font-weight:bold;
+}
+
+table{
+width:100%;margin-top:25px;border-collapse:collapse;
+border-radius:10px;overflow:hidden;
+}
+
+th{background:linear-gradient(135deg, #eef2f7, #d4e4f7);color:#2c3e50;font-weight:bold;}
+th,td{padding:12px;text-align:left;border-bottom:1px solid #ddd;}
+td:last-child{color:#27ae60;font-weight:bold;}
+
+.installment-box{
+margin-top:25px;background:linear-gradient(135deg, #f2f4f8, #e9eef5);
+padding:20px;border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,0.05);
+}
+
+.installment-box input{
+padding:12px;width:160px;margin-right:15px;border:2px solid #ddd;border-radius:8px;
+}
+
+.installment-box button{
+padding:12px 25px;background:linear-gradient(135deg, #4a79e0, #3578e5);
+border:none;border-radius:8px;color:#fff;font-weight:bold;
+transition:transform 0.2s;
+}
+.installment-box button:hover{
+transform:scale(1.05);
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN SECTION -->
+<div class="container" id="authBox">
+
+<h2>RD Portal</h2>
+<!-- LOGIN -->
+<div id="login-form">
+<div class="input-box">
+<input id="login-username" placeholder="Username">
+</div>
+<div class="input-box">
+<input id="login-password" type="password" placeholder="Password">
+</div>
+<button onclick="login()">Login</button>
+</div>
+
+
+<p id="message"></p>
+
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+<div class="wrapper">
+<div class="card">
+
+<h2>Post Office RD Account</h2>
+
+<div class="top">
+<div style="display:flex;align-items:center;gap:8px;">
+<button class="logout-inline-btn" onclick="logout()">Logout</button>
+<p id="userName" style="margin:0;">User</p>
+</div>
+<p id="postInfo">Post ID: N/A</p>
+<p id="userRole" style="font-size:14px;color:#666;margin:0;">Role: guest</p>
+<div class="balance">₹<span id="balance">0</span>.00</div>
+<div>🏤</div>
+</div>
+
+<div class="success" id="successMsg">
+✔ Welcome to RD Dashboard
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Installment Paid</th>
+<th>Status</th>
+<th>Balance</th>
+</tr>
+</thead>
+
+<tbody id="tableBody"></tbody>
+</table>
+<!-- <div style="margin-bottom:15px;">
+  <input id="searchInput" placeholder="Search Username or Post ID" 
+         style="padding:8px;width:220px;border:1px solid #ccc;border-radius:6px;">
+  <button onclick="searchUser()" 
+          style="padding:8px 12px;background:#2c3e50;color:#fff;border:none;border-radius:6px;">
+    Search
+  </button>
+</div> -->
+
+<!-- SEARCH RESULT -->
+<!-- <div id="searchResult" style="display:none;margin-top:10px;padding:10px;background:#eef;border-radius:8px;">
+  <p><b>Username:</b> <span id="sUser"></span></p>
+  <p><b>Post ID:</b> <span id="sPost"></span></p>
+  <p><b>Role:</b> <span id="sRole"></span></p>
+  <p><b>Balance:</b> ₹<span id="sBalance"></span></p>
+</div> -->
+
+<div id="searchResult" style="display:none;margin-top:15px;padding:15px;background:#eef;border-radius:10px;">
+
+<h4>Search Result</h4>
+
+<p><b>Username:</b> <span id="sUser"></span></p>
+<p><b>Post ID:</b> <span id="sPost"></span></p>
+<p><b>Role:</b> <span id="sRole"></span></p>
+
+<p><b>Balance:</b> ₹<span id="sBalance"></span></p>
+
+<hr>
+
+<!-- EDIT SECTION -->
+<input type="number" id="editBalance" placeholder="Set New Balance" 
+style="padding:6px;margin:5px 0;width:150px;">
+
+<button onclick="updateBalanceFromSearch()" 
+style="padding:6px 10px;background:#e67e22;color:#fff;border:none;border-radius:6px;">
+Update Balance
+</button>
+
+<br><br>
+
+<input type="number" id="addAmount" placeholder="Add Installment (min 500)" 
+style="padding:6px;margin:5px 0;width:180px;">
+
+<button onclick="addInstallmentFromSearch()" 
+style="padding:6px 10px;background:#27ae60;color:#fff;border:none;border-radius:6px;">
+Add Installment
+</button>
+
+</div>
+
+<div id="adminPanel" style="display:none; margin-top:25px;">
+<h3>Admin Panel</h3>
+
+<div style="margin-bottom:20px;">
+<h4>Register New Member</h4>
+<div class="input-box">
+<input id="admin-register-username" placeholder="Username">
+</div>
+<div class="input-box">
+<input id="admin-register-postid" placeholder="Post ID">
+</div>
+<div class="input-box">
+<input id="admin-register-password" type="password" placeholder="Password">
+</div>
+<button onclick="adminRegister()">Register Member</button>
+</div>
+
+<h4>Registered Users</h4>
+<table style="width:100%;border-collapse:collapse;">
+<thead>
+<tr><th>Username</th><th>Post ID</th><th>Role</th><th>Balance</th><th>Update Balance</th><th>Add Installment</th><th>Delete</th></tr>
+</thead>
+<tbody id="usersTableBody"></tbody>
+</table>
+</div>
+
+<div class="installment-box">
+<!-- <h3>Add New Installment</h3>
+<input type="number" id="amount" value="2500">
+<button onclick="addInstallment()">Submit</button>
+<p style="font-size:12px;">Minimum ₹500</p> -->
+</div>
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// STORAGE
+function getUsers(){
+  return JSON.parse(localStorage.getItem("users")) || [];
+}
+function saveUsers(users){
+  localStorage.setItem("users", JSON.stringify(users));
+}
+
+function saveCurrentUser(user){
+  if (!user) return;
+  localStorage.setItem('currentUser', JSON.stringify(user));
+}
+function clearCurrentUser(){
+  localStorage.removeItem('currentUser');
+}
+function loadCurrentUser(){
+  return JSON.parse(localStorage.getItem('currentUser')) || null;
+}
+
+// Initialize default admin if no users exist
+function initializeDefaultAdmin(){
+  let users = getUsers();
+
+  const adminExists = users.some(u => u.role === 'admin' && u.username === 'krishna');
+  if(!adminExists){
+    users.push({
+      username: 'krishna',
+      postId: 'ADMIN001',
+      password: '123456789',
+      role: 'admin',
+      balance: 0,
+      installments: []
+    });
+    saveUsers(users);
+  }
+}
+
+// Call on page load
+window.onload = function(){
+  initializeDefaultAdmin();
+
+  const persisted = loadCurrentUser();
+  if (persisted) {
+    const users = getUsers();
+    const match = users.find(u => u.username === persisted.username);
+    if (match) {
+      currentUser = match;
+      document.getElementById('authBox').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      document.getElementById('userName').innerText = match.username;
+      document.getElementById('postInfo').innerText = `Post ID: ${match.postId || 'N/A'}`;
+      document.getElementById('balance').innerText = match.balance || 0;
+      setRoleAccess(match.role);
+      renderInstallments();
+    } else {
+      clearCurrentUser();
+    }
+  }
+};
+
+let currentRole = 'guest';
+
+function setRoleAccess(role) {
+  currentRole = role || 'user';
+  document.getElementById('userRole').innerText = 'Role: ' + currentRole;
+
+  const installmentBox = document.querySelector('.installment-box');
+  const adminPanel = document.getElementById('adminPanel');
+
+  if (role === 'admin') {
+    installmentBox.style.display = 'block';
+    adminPanel.style.display = 'block';
+    document.getElementById('successMsg').innerText = '✔ Admin mode: You can manage users and installments.';
+    renderUsersList();
+  } else {
+    installmentBox.style.display = 'block';
+    adminPanel.style.display = 'none';
+    document.getElementById('successMsg').innerText = '🔒 User mode';
+  }
+}
+
+// SWITCH FORM - Removed as public registration is disabled
+
+function renderUsersList(){
+  let users = getUsers();
+  const body = document.getElementById('usersTableBody');
+  body.innerHTML = '';
+
+  // hide admin accounts from the user table, show only members created by admin
+  users = users
+    .filter(u => u.role !== 'admin')
+    .sort((a, b) => a.username.localeCompare(b.username));
+
+  users.forEach(u => {
+    const deleteCell = currentRole === 'admin' ? `<button onclick="deleteUser('${u.username}')" style="background:#e74c3c;color:#fff;border:none;padding:5px 8px;border-radius:6px;cursor:pointer;">Delete</button>` : '—';
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${u.username}</td>
+      <td>${u.postId || 'N/A'}</td>
+      <td>${u.role}</td>
+      <td class="userBalanceCell">₹${u.balance || 0}</td>
+      <td><input type="number" min="0" value="${u.balance || 0}" id="input-${u.username}" style="width:90px;"><button onclick="setUserBalance('${u.username}')">Update</button></td>
+      <td><input type="number" min="500" id="inst-${u.username}" style="width:70px;"><button onclick="addInstallmentForUser('${u.username}')">Add</button></td>
+      <td>${deleteCell}</td>
+    `;
+    body.appendChild(row);
+  });
+}
+
+function setUserBalance(username){
+  if (currentRole !== 'admin') {
+    alert('Only admin can update balances');
+    return;
+  }
+  const input = document.getElementById('input-'+username);
+  if (!input) return;
+  const val = parseInt(input.value);
+  if (isNaN(val) || val < 0){
+    alert('Enter a valid non-negative amount');
+    return;
+  }
+
+  const users = getUsers();
+  const user = users.find(x=>x.username===username);
+  if(!user) return;
+  user.balance = val;
+  saveUsers(users);
+
+  renderUsersList();
+  document.getElementById('successMsg').innerText = `✔ ${username} balance updated to ₹${val}`;
+
+  if (currentUser && currentUser.username===username){
+    document.getElementById('balance').innerText = val;
+    currentUser.balance = val;
+    saveCurrentUser(currentUser);
+  }
+}
+
+function addInstallmentForUser(username){
+  if (currentRole !== 'admin') {
+    alert('Only admin can add installments');
+    return;
+  }
+  const input = document.getElementById('inst-'+username);
+  if (!input) return;
+  const amt = parseInt(input.value);
+  if (isNaN(amt) || amt < 500){
+    alert('Enter a valid amount, minimum ₹500');
+    return;
+  }
+
+  const users = getUsers();
+  const user = users.find(x=>x.username===username);
+  if(!user) return;
+  user.balance = (parseInt(user.balance,10) || 0) + amt;
+  user.installments = user.installments || [];
+  const date = new Date().toLocaleDateString();
+  user.installments.unshift({ date, amount: amt, status: 'Paid', balance: user.balance });
+  saveUsers(users);
+
+  renderUsersList();
+  document.getElementById('successMsg').innerText = `✔ Installment ₹${amt} added for ${username} on ${date}`;
+
+  if (currentUser && currentUser.username===username){
+    document.getElementById('balance').innerText = user.balance;
+    currentUser.balance = user.balance;
+    saveCurrentUser(currentUser);
+    renderInstallments();
+  }
+}
+
+function logout(){
+  clearCurrentUser();
+  currentUser = null;
+  currentRole = 'guest';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('authBox').style.display = 'block';
+  document.getElementById('message').innerText = 'Logged out successfully';
+}
+
+function getDeletedUsers(){
+  return JSON.parse(localStorage.getItem('deletedUsers')) || [];
+}
+function saveDeletedUsers(deleted){
+  localStorage.setItem('deletedUsers', JSON.stringify(deleted));
+}
+
+function deleteUser(username){
+  if (currentRole !== 'admin') {
+    alert('Only admin can delete users.');
+    return;
+  }
+  if (!confirm(`Are you sure you want to delete ${username}?`)) {
+    return;
+  }
+
+  const users = getUsers();
+  const index = users.findIndex(x => x.username === username);
+  if (index === -1) return;
+
+  const [deleted] = users.splice(index, 1);
+  saveUsers(users);
+
+  const deletedUsers = getDeletedUsers();
+  deletedUsers.push({ ...deleted, deletedAt: new Date().toISOString() });
+  saveDeletedUsers(deletedUsers);
+
+  renderUsersList();
+  document.getElementById('successMsg').innerText = `✔ ${username} moved to deleted folder.`;
+
+  if (currentUser && currentUser.username === username){
+    currentUser = null;
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('authBox').style.display = 'block';
+    message.innerText = `${username} was deleted and logged out.`;
+  }
+}
+
+function adminRegister(){
+  if (currentRole !== 'admin') {
+    alert('Only admin can register new members.');
+    return;
+  }
+
+  let u = document.getElementById("admin-register-username").value;
+  let postId = document.getElementById("admin-register-postid").value;
+  let p = document.getElementById("admin-register-password").value;
+
+  if(!u || !postId || !p){
+    document.getElementById('successMsg').innerText = 'Fill all fields!';
+    return;
+  }
+
+  let users = getUsers();
+  if(users.find(x=>x.username===u)){
+    document.getElementById('successMsg').innerText = 'Username already exists!';
+    return;
+  }
+
+  if(users.find(x=>x.postId===postId)){
+    document.getElementById('successMsg').innerText = 'Post ID already registered!';
+    return;
+  }
+
+  const role = 'user'; // New members are users by default
+  users.push({username:u,postId:postId,password:p,role:role,balance:0,installments:[]});
+  saveUsers(users);
+
+  // Clear inputs
+  document.getElementById("admin-register-username").value = '';
+  document.getElementById("admin-register-postid").value = '';
+  document.getElementById("admin-register-password").value = '';
+
+  renderUsersList();
+  document.getElementById('successMsg').innerText = `✔ New member ${u} registered successfully!`;
+}
+
+// REGISTER - Public registration disabled, only admin can register
+
+// LOGIN
+function login(){
+let u=document.getElementById("login-username").value;
+let p=document.getElementById("login-password").value;
+
+let users=getUsers();
+let valid=users.find(x=>x.username===u && x.password===p);
+
+if(valid){
+  currentUser = valid;
+  document.getElementById("authBox").style.display="none";
+  document.getElementById("dashboard").style.display="block";
+
+  document.getElementById("userName").innerText=u;
+  document.getElementById("postInfo").innerText = `Post ID: ${valid.postId || 'N/A'}`;
+  document.getElementById("balance").innerText = valid.balance || 0;
+
+  const role = valid.role || (u.toLowerCase() === 'krishna' ? 'admin' : 'user');
+  saveCurrentUser(valid);            // keep current user after refresh
+  setRoleAccess(role);
+  renderInstallments();
+
+} else {
+  message.innerHTML="Invalid Login!";
+}
+}
+
+
+
+// ADD INSTALLMENT
+function renderInstallments(){
+  const tableBody = document.getElementById('tableBody');
+  tableBody.innerHTML = '';
+  if (!currentUser || !currentUser.installments) return;
+
+  currentUser.installments.forEach(entry => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${entry.date}</td>
+      <td>₹${entry.amount}</td>
+      <td>${entry.status}</td>
+      <td>₹${entry.balance || 0}</td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
+
+function addInstallment(){
+  if (!currentUser) {
+    alert('Please login first.');
+    return;
+  }
+
+  let amt=parseInt(document.getElementById("amount").value);
+  if(isNaN(amt) || amt<500){
+    alert("Minimum ₹500 required");
+    return;
+  }
+
+  currentUser.balance = (parseInt(currentUser.balance,10) || 0) + amt;
+  currentUser.installments = currentUser.installments || [];
+  const date = new Date().toLocaleDateString();
+  currentUser.installments.unshift({ date, amount: amt, status: 'Paid', balance: currentUser.balance });
+
+  const users = getUsers();
+  const idx = users.findIndex(u => u.username === currentUser.username);
+  if (idx !== -1){
+    users[idx] = currentUser;
+    saveUsers(users);
+  }
+
+  document.getElementById("balance").innerText = currentUser.balance;
+  saveCurrentUser(currentUser);
+  document.getElementById('successMsg').innerText = `✔ Installment ₹${amt} added on ${date}`;
+
+  renderUsersList();
+  renderInstallments();
+}
+let selectedUser = null;
+
+function searchUser(){
+
+let query = document.getElementById("searchInput").value.toLowerCase().trim();
+
+if(!query){
+alert("Enter Username or Post ID");
+return;
+}
+
+// let users = getUsers();
+
+// let user = users.find(u =>
+//   (u.username && u.username.toLowerCase() === query) ||
+//   (u.postId && u.postId.toLowerCase() === query)
+// );
+
+// if(user){
+
+// selectedUser = user;
+
+// document.getElementById("searchResult").style.display="block";
+
+// document.getElementById("sUser").innerText = user.username;
+// document.getElementById("sPost").innerText = user.postId || "N/A";
+// document.getElementById("sRole").innerText = user.role;
+// document.getElementById("sBalance").innerText = user.balance || 0;
+
+// }else{
+// selectedUser = null;
+// document.getElementById("searchResult").style.display="none";
+// alert("User not found!");
+// }
+// }
+function addInstallmentFromSearch(){
+
+if(!selectedUser){
+alert("Search user first!");
+return;
+}
+
+let amt = parseInt(document.getElementById("addAmount").value);
+
+if(isNaN(amt) || amt < 500){
+alert("Minimum ₹500 required");
+return;
+}
+
+let users = getUsers();
+let user = users.find(u => u.username === selectedUser.username);
+
+if(!user){
+alert("User not found");
+return;
+}
+}
+}
+</script>
+
+</body>
+</html>
